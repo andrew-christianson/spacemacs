@@ -10,10 +10,12 @@
         helm-gtags
         go-eldoc
         go-mode
-        (go-oracle :location site)
+        (go-oracle :location site
+                   :toggle (not go-use-go-oracle))
         (go-rename :location local)
+        (go-guru :toggle 'go-use-go-oracle
+                 :location site)
         ))
-
 
 (defun go/post-init-company ()
   (spacemacs|add-company-hook go-mode))
@@ -133,6 +135,30 @@
           "rr" 'go-oracle-referrers
           "rs" 'go-oracle-callstack
           "rt" 'go-oracle-describe)))))
+
+(defun go/init-go-guru()
+  (let ((go-path (getenv "GOPATH")))
+    (if (not go-path)
+        (spacemacs-buffer/warning
+         "GOPATH variable not found, skipping go-guru c")
+      (when (load-gopath-file
+             go-path "/src/golang.org/x/tools/cmd/guru/go-guru.el")
+        (spacemacs/declare-prefix-for-mode 'go-mode "mr" "rename")
+        (spacemacs/set-leader-keys-for-major-mode 'go-mode
+          "ro" 'go-guru-set-scope
+          "r<" 'go-guru-callers
+          "r>" 'go-guru-callees
+          "rc" 'go-guru-peers
+          "rd" 'go-guru-definition
+          "rf" 'go-guru-freevars
+          ;; "rg" 'go-guru-callgraph
+          "ri" 'go-guru-implements
+          "rp" 'go-guru-pointsto
+          "rr" 'go-guru-referrers
+          "rs" 'go-guru-callstack
+          "rt" 'go-guru-describe
+          "re" 'go-guru-whicherrs
+          "rv" 'go-guru-expand-region)))))
 
 (defun go/init-go-rename()
   (use-package go-rename

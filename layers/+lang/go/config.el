@@ -23,3 +23,6 @@
 
 (defvar go-use-gometalinter nil
   "Use gometalinter if the variable has non-nil value.")
+
+(defvar go-use-go-guru nil
+  "Use go-guru for completion instead of go-oracle")
